@@ -3,6 +3,9 @@
 #include <vector>
 #include <string>
 #include <string_view>
+#inclide <fstream>
+#include <sstream>
+#include <unordered_map>
 // colors
 constexpr std::string_view RESET = "\033[0m";
 constexpr std::string_view RED = "\033[31m";
@@ -36,6 +39,6 @@ public:
     void setId(int new_id) { id = new_id; }
 };
 // reg user
-int reg_user(const std::string& name, const std::string& email, std::vector<User>& users);
+int reg_user(const std::string& name, const std::string& email, std::unordered_map<int, User>& users);
 // delete user
-void delete_user(std::vector<User>& users, int& current_user_id);
+void delete_user(std::unordered_map<int, User>& users, int& current_user_id);
