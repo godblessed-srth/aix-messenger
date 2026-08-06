@@ -32,7 +32,7 @@ void clear_screen() {
     cout << CLEAR;
 }
 
-int registration(std::vector<User>& users) {
+int registration() {
     std::string name, email;
     // username
     cout << "Your name: ";
@@ -54,17 +54,17 @@ int registration(std::vector<User>& users) {
     // email.empty()
     if (email.empty()) { cout << RED << "[ ERR ] Email is empty!\n" << RESET; return -1; }
     // reg user
-    return reg_user(name, email, users);
+    return reg_user(name, email);
 }
 
-void userId(const std::vector<User>& users, int current_user_id) {
-    if (current_user_id == -1) {
+void userId() {
+    if (g_current_user_id == -1) {
         cout << RED << "[ ERR ] No user!\n" << RESET;
         return;
     }
 
-    for (const auto& user : users) {
-        if (user.getId() == current_user_id) {
+    for (const auto& user : g_users) {
+        if (user.getId() == g_current_user_id) {
             cout << user.getId() << "\n";
             return;
         }
@@ -78,8 +78,6 @@ int main() {
     cout << "Enter 'help' for list of commands\n";
     
     std::string command;
-    std::vector<User> users;
-    int current_user_id = -1;
 
     cout << STR << std::flush;
 
@@ -101,19 +99,19 @@ int main() {
         } else if (command == "help") {
             help();
         } else if (command == "reg") {
-            int new_id = registration(users);
+            int new_id = registration();
 
             if (new_id != -1) {
-                current_user_id = new_id;
+                g_current_user_id = new_id;
             }
-            // EOF
+            // EOF:-)
             if (!std::cin) {
                 break;
             }
         } else if (command == "id") {
-            userId(users, current_user_id);
+            userId();
         } else if (command == "del") {
-            delete_user(users, current_user_id);
+            delete_user();
             if (!std::cin) {
                 break;
             }
