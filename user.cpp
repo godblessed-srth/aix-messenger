@@ -1,5 +1,21 @@
 #include "user.hpp"
 #include <iostream>
+// validate email
+bool ValidEmail(const std::string& email) {
+    // @
+    size_t dog = email.find('@');
+    if (dog == std::string::npos) return false;
+    // .
+    size_t dot = email.find('.');
+    if (dot == std::string::npos) return false;
+
+    if (dog == 0 || dog == email.length() - 1) return flase;
+    if (dot == email.length() - 1) return false;
+
+    if (dot - dog <= 1) return false;
+
+    return true;
+}
 // reg user
 void reg_user(const std::string& name, const std::string& email, std::vector<User>& users) {
     static int next_id = 0;
@@ -9,8 +25,12 @@ void reg_user(const std::string& name, const std::string& email, std::vector<Use
     user.email = email;
     user.id = next_id++;
 
+    if (!ValidEmail(email)) {
+        std::cou << RED << "[ ERR ] Invalid email format! Must contain '@' and '.'\n" << RESET;
+        return;
+    }
+    
     users.push_back(user);
-
     std::cout << GREEN << "[ OK ] Successfully registred! Welcome!\n" << RESET;
 }
 // delete user
