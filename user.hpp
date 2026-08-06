@@ -8,11 +8,12 @@ constexpr std::string_view RESET = "\033[0m";
 constexpr std::string_view RED = "\033[31m";
 constexpr std::string_view GREEN = "\033[32m";
 // user
-struct User {
-    std::string name = "Guest";
-    std::string email = "example@mail.com";
-    std::string hash_em = "";
-    int id = -1;  //unknown id
+class User {
+    private:
+        std::string name = "Guest";
+        std::string email = "example@mail.com";
+        std::string hash_em = "";
+        int id = -1;  //unknown id
 };
 // reg user
 void reg_user(const std::string& name, const std::string& email, std::vector<User>& users);
