@@ -2,8 +2,8 @@
 #include <iostream>
 #include <functional>
 // globals
-extern std::vector<User> g_users;
-extern int g_current_user_id = -1;
+std::vector<User> g_users;
+int g_current_user_id = -1;
 // hash email
 std::string hashEmail(const std::string& email) {
     std::hash<std::string> hasher;
@@ -39,18 +39,18 @@ int reg_user(const std::string& name, const std::string& email) {
 
     std::string new_hash = hashEmail(email);
     
-    for (const auto& user : users) {
-        if (g_user.getHash() == new_hash) {
-            std::cout << RED << "[ ERR ] Email " << email << "id already taken!\n" << RESET;
+    for (const auto& user : g_users) {
+        if (user.getHash() == new_hash) {
+            std::cout << RED << "[ ERR ] Email " << email << " is already taken!\n" << RESET;
             return -1;
         }
     }
 
-    int next_id = users.empty() ? 0 : g_users.back().getId() + 1;
+    int next_id = g_users.empty() ? 0 : g_users.back().getId() + 1;
     User new_user(name, email, next_id);
     g_users.push_back(new_user);
     
-    std::cout << GREEN << "[ OK ] Successfully registred! Welcome!\n" << RESET;
+    std::cout << GREEN << "[ OK ] Successfully registered! Welcome!\n" << RESET;
     return next_id;
 }
 // delete user
@@ -61,7 +61,7 @@ void delete_user() {
     }
     
     int id_to_delete = g_current_user_id;
-    for (auto it = users.begin(); it != users.end(); ++it) {
+    for (auto it = g_users.begin(); it != g_users.end(); ++it) {
         if (it->getId() == id_to_delete) {
             g_users.erase(it);
             std::cout << GREEN << "[ OK ] User deleted: " << id_to_delete << RESET << "\n";
