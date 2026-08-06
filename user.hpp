@@ -26,7 +26,10 @@ public:
     int getId() const { return id; }
     // setters
     void setName(const std::string& n) { name = n; }
-    void setEmail(const std::string& e) { email = e; }
+    void setEmail(const std::string& e) {
+        email = e;
+        hash_em = hashEmail(e);
+    }
     void setHash(const std::string& h) { hash_em = h; }
     void setId(int new_id) { id = new_id; }
 };
