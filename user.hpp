@@ -17,7 +17,7 @@ private:
 public:
     User() = default;
     User(const std::string& n, const std::string& e, int new_id) : name(n), email(e), id(new_id) {
-        hash_em = hashEmail(e)
+        hash_em = hashEmail(e);
     }
     // getters
     std::string getName() const { return name; }
