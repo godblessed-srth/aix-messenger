@@ -23,7 +23,7 @@ bool ValidEmail(const std::string& email) {
     return true;
 }
 // reg user
-int reg_user(const std::string& name, const std::string& email, std::unordered_map<int, User>& users) {
+int reg_user(const std::string& name, const std::string& email, std::vector<User>& users) {
     if (name.empty() || email.empty()) {
         std::cout << RED << "[ ERR ] Name and email cannot be empty!\n" << RESET;
         return -1;
@@ -51,7 +51,7 @@ int reg_user(const std::string& name, const std::string& email, std::unordered_m
     return next_id;
 }
 // delete user
-void delete_user(std::unordered_map<int, User>& users, int& current_user_id) {
+void delete_user(std::vector<User>& users, int& current_user_id) {
     if (current_user_id == -1) {
         std::cout << RED << "[ ERR ] No user to delete!\n" << RESET;
         return;
