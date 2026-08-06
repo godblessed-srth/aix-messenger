@@ -16,7 +16,7 @@ private:
     int id = -1;  //unknown id
 public:
     User() = default;
-    User(const std::string& n, const std::string& e, int new_id) : name(e), email(e), id(new_id) {}
+    User(const std::string& n, const std::string& e, int new_id) : name(n), email(e), id(new_id) {}
     // getters
     std::string getName() const { return name; }
     std::string getEmail() const { return email; }
