@@ -39,6 +39,6 @@ public:
     void setId(int new_id) { id = new_id; }
 };
 // reg user
-int reg_user(const std::string& name, const std::string& email, std::unordered_map<int, User>& users);
+int reg_user(const std::string& name, const std::string& email, std::unordered_map<int, User>& users, std::unordered_map<std::string, int>& emToId);
 // delete user
-void delete_user(std::unordered_map<int, User>& users, int& current_user_id);
+void delete_user(std::unordered_map<int, User>& users, int& current_user_id, std::unordered_map<std::string, int>& emToId);
