@@ -27,7 +27,7 @@ void reg_user(const std::string& name, const std::string& email, std::vector<Use
     int next_id = 0;
 
     if (!users.empty()) {
-        next_id = users.back().id + 1;
+        next_id = users.back().getId() + 1;
     }
     
     if (name.empty() || email.empty()) {
@@ -40,18 +40,15 @@ void reg_user(const std::string& name, const std::string& email, std::vector<Use
         return;
     }
 
+    std::string new_hash = hashEmail(email);
+    
     for (const auto& user : users) {
-        if (user.getHash() == email) {
+        if (user.getHash() == new_hash) {
             std::cout << RED << "[ ERR ] Email " << email << "id already taken!\n" << RESET;
             return;
         }
     }
     
-    User user;
-    user.name = name;
-    user.email = email;
-    user.id = next_id;
-
     User user(name, email, next_id);
     users.push_back(user);
     std::cout << GREEN << "[ OK ] Successfully registred! Welcome!\n" << RESET;
@@ -65,7 +62,7 @@ void delete_user(std::vector<User>& users, int& current_user_id) {
 
     int id_to_delete = current_user_id;
     for (auto it = users.begin(); it != users.end(); ++it) {
-        if (it->id == id_to_delete) {
+        if (it->getId() == id_to_delete) {
             users.erase(it);
             std::cout << GREEN << "[ OK ] User deleted: " << id_to_delete << RESET << "\n";
             current_user_id = -1;
