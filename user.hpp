@@ -7,6 +7,8 @@
 constexpr std::string_view RESET = "\033[0m";
 constexpr std::string_view RED = "\033[31m";
 constexpr std::string_view GREEN = "\033[32m";
+// hash email
+std::string hashEmail(const std::string& email);
 // user
 class User {
 private:
@@ -37,5 +39,3 @@ public:
 int reg_user(const std::string& name, const std::string& email, std::vector<User>& users);
 // delete user
 void delete_user(std::vector<User>& users, int& current_user_id);
-// hash email
-std::string hashEmail(const std::string& email);
