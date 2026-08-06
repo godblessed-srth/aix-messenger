@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <string_view>
 #include "user.hpp"
 using std::cout;
@@ -39,7 +40,7 @@ int registration(std::vector<User>& users) {
         return -1;
     }
     // name.empty()
-    if (name.empty()) { cout << RED << "[ ERR ] Name is empty!\n" << RESET; return nullptr; }
+    if (name.empty()) { cout << RED << "[ ERR ] Name is empty!\n" << RESET; return -1; }
     // EOF :)
     if (std::cin.eof()) {
         cout << "\n";
@@ -51,12 +52,12 @@ int registration(std::vector<User>& users) {
         return -1;
     }
     // email.empty()
-    if (email.empty()) { cout << RED << "[ ERR ] Email is empty!\n" << RESET; return nullptr; }
+    if (email.empty()) { cout << RED << "[ ERR ] Email is empty!\n" << RESET; return -1; }
     // reg user
     reg_user(name, email, users);
 
     for (const auto& user : users) {
-        if (user.name -= name && user.email == email) {
+        if (user.name == name && user.email == email) {
             return user.id;
         }
     }
@@ -64,8 +65,8 @@ int registration(std::vector<User>& users) {
     return -1;
 }
 
-void userId(const User* current_user) {
-    if (current_user == nullptr) {
+void userId(const std::vector<User>& users, int current_user_id) {
+    if (current_user_id == -1) {
         cout << RED << "[ ERR ] No user!\n" << RESET;
         return;
     }
@@ -73,6 +74,7 @@ void userId(const User* current_user) {
     for (const auto& user : users) {
         if (user.id == current_user_id) {
             cout << user.id << "\n";
+            return;
         }
     }
     
@@ -107,7 +109,7 @@ int main() {
         } else if (command == "help") {
             help();
         } else if (command == "reg") {
-            current_user = registration(users);
+            int new_id = registration(users);
 
             if (new_id != -1) {
                 current_user_id = new_id;
@@ -117,7 +119,7 @@ int main() {
                 break;
             }
         } else if (command == "id") {
-            userId(current_user);
+            userId(users, current_user_id);
         } else if (command == "del") {
             delete_user(users, current_user_id);
             if (!std::cin) {
