@@ -1,5 +1,11 @@
 #include "user.hpp"
 #include <iostream>
+#include <functional>
+// hash email
+std::string hashEmail(const std::string& email) {
+    std::hash<std::string> hasher;
+    return std::to_string(hasher(email));
+}   
 // validate email
 bool ValidEmail(const std::string& email) {
     // @
@@ -35,7 +41,7 @@ void reg_user(const std::string& name, const std::string& email, std::vector<Use
     }
 
     for (const auto& user : users) {
-        if (user.email == email) {
+        if (user.getHash() == email) {
             std::cout << RED << "[ ERR ] Email " << email << "id already taken!\n" << RESET;
             return;
         }
@@ -45,7 +51,8 @@ void reg_user(const std::string& name, const std::string& email, std::vector<Use
     user.name = name;
     user.email = email;
     user.id = next_id;
-    
+
+    User user(name, email, next_id);
     users.push_back(user);
     std::cout << GREEN << "[ OK ] Successfully registred! Welcome!\n" << RESET;
 }
