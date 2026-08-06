@@ -55,15 +55,6 @@ int registration(std::vector<User>& users) {
     if (email.empty()) { cout << RED << "[ ERR ] Email is empty!\n" << RESET; return -1; }
     // reg user
     return reg_user(name, email, users);
-
-    std::string email_hash = hashEmail(email);
-    for (const auto& user : users) {
-        if (user.getName() == name && user.getHash() == email_hash) {
-            return user.id;
-        }
-    }
-    
-    return -1;
 }
 
 void userId(const std::vector<User>& users, int current_user_id) {
