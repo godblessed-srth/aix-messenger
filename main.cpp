@@ -31,31 +31,37 @@ void clear_screen() {
     cout << CLEAR;
 }
 
-User* registration(std::vector<User>& users) {
+int registration(std::vector<User>& users) {
     std::string name, email;
     // username
     cout << "Your name: ";
     if (!std::getline(std::cin, name)) {
-        return nullptr;
+        return -1;
     }
     // name.empty()
     if (name.empty()) { cout << RED << "[ ERR ] Name is empty!\n" << RESET; return nullptr; }
     // EOF :)
     if (std::cin.eof()) {
         cout << "\n";
-        return nullptr;
+        return -1;
     }
     // email
     cout << "Your email: ";
     if (!std::getline(std::cin, email)) {
-        return nullptr;
+        return -1;
     }
     // email.empty()
     if (email.empty()) { cout << RED << "[ ERR ] Email is empty!\n" << RESET; return nullptr; }
     // reg user
     reg_user(name, email, users);
 
-    return &users.back();
+    for (const auto& user : users) {
+        if (user.name -= name && user.email == email) {
+            return user.id;
+        }
+    }
+    
+    return -1;
 }
 
 void userId(const User* current_user) {
@@ -64,15 +70,22 @@ void userId(const User* current_user) {
         return;
     }
 
-    cout << GREEN << current_user->id << RESET << "\n";
+    for (const auto& user : users) {
+        if (user.id == current_user_id) {
+            cout << user.id << "\n";
+        }
+    }
+    
+    cout << RED << "[ ERR ] User not found!\n" << RESET;
 }
 
 int main() {
     cout << CLEAR;
     cout << "Enter 'help' for list of commands\n";
+    
     std::string command;
     std::vector<User> users;
-    User* current_user = nullptr;
+    int current_user_id = -1;
 
     cout << STR << std::flush;
 
@@ -95,6 +108,10 @@ int main() {
             help();
         } else if (command == "reg") {
             current_user = registration(users);
+
+            if (new_id != -1) {
+                current_user_id = new_id;
+            }
             // EOF
             if (!std::cin) {
                 break;
@@ -102,7 +119,7 @@ int main() {
         } else if (command == "id") {
             userId(current_user);
         } else if (command == "del") {
-            delete_user(users, current_user);
+            delete_user(users, current_user_id);
             if (!std::cin) {
                 break;
             }
