@@ -5,6 +5,9 @@
 #include <string_view>
 #include <fstream>
 #include <sstream>
+// global
+extern std::vector<User> g_users;
+extern int g_current_user_id;
 // colors
 constexpr std::string_view RESET = "\033[0m";
 constexpr std::string_view RED = "\033[31m";
@@ -38,6 +41,6 @@ public:
     void setId(int new_id) { id = new_id; }
 };
 // reg user
-int reg_user(const std::string& name, const std::string& email, std::vector<User>& users);
+int reg_user(const std::string& name, const std::string& email);
 // delete user
-void delete_user(std::vector<User>& users, int& current_user_id);
+void delete_user();
