@@ -16,4 +16,4 @@ struct User {
 // reg user
 void reg_user(const std::string& name, const std::string& email, std::vector<User>& users);
 // delete user
-void delete_user(std::vector<User>& users, User*& current_user);
+void delete_user(std::vector<User>& users, int& current_user_id);
