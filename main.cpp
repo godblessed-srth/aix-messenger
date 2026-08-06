@@ -54,10 +54,12 @@ int registration(std::vector<User>& users) {
     // email.empty()
     if (email.empty()) { cout << RED << "[ ERR ] Email is empty!\n" << RESET; return -1; }
     // reg user
-    reg_user(name, email, users);
+    int new_id = reg_user(name, email, users);
+    return new_id;
 
+    std::string email_hash = hashEmail(email);
     for (const auto& user : users) {
-        if (user.name == name && user.email == email) {
+        if (user.getName() == name && user.getHash() == email_hash) {
             return user.id;
         }
     }
@@ -72,8 +74,8 @@ void userId(const std::vector<User>& users, int current_user_id) {
     }
 
     for (const auto& user : users) {
-        if (user.id == current_user_id) {
-            cout << user.id << "\n";
+        if (user.getId() == current_user_id) {
+            cout << user.getId() << "\n";
             return;
         }
     }
