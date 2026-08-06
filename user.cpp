@@ -23,15 +23,15 @@ bool ValidEmail(const std::string& email) {
     return true;
 }
 // reg user
-void reg_user(const std::string& name, const std::string& email, std::vector<User>& users) {
+int reg_user(const std::string& name, const std::string& email, std::vector<User>& users) {
     if (name.empty() || email.empty()) {
         std::cout << RED << "[ ERR ] Name and email cannot be empty!\n" << RESET;
-        return;
+        return -1;
     }
 
     if (!ValidEmail(email)) {
         std::cout << RED << "[ ERR ] Invalid email format! Must contain '@' and '.'\n" << RESET;
-        return;
+        return -1;
     }
 
     std::string new_hash = hashEmail(email);
@@ -39,7 +39,7 @@ void reg_user(const std::string& name, const std::string& email, std::vector<Use
     for (const auto& user : users) {
         if (user.getHash() == new_hash) {
             std::cout << RED << "[ ERR ] Email " << email << "id already taken!\n" << RESET;
-            return;
+            return -1;
         }
     }
 
