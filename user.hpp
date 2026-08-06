@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include <string_view>
-#inclide <fstream>
+#include <fstream>
 #include <sstream>
 #include <unordered_map>
 // colors
