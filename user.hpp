@@ -11,6 +11,7 @@ constexpr std::string_view GREEN = "\033[32m";
 struct User {
     std::string name = "Guest";
     std::string email = "example@mail.com";
+    std::string hash_em = "";
     int id = -1;  //unknown id
 };
 // reg user
