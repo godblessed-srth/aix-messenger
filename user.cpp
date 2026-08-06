@@ -24,12 +24,6 @@ bool ValidEmail(const std::string& email) {
 }
 // reg user
 void reg_user(const std::string& name, const std::string& email, std::vector<User>& users) {
-    int next_id = 0;
-
-    if (!users.empty()) {
-        next_id = users.back().getId() + 1;
-    }
-    
     if (name.empty() || email.empty()) {
         std::cout << RED << "[ ERR ] Name and email cannot be empty!\n" << RESET;
         return;
@@ -48,10 +42,13 @@ void reg_user(const std::string& name, const std::string& email, std::vector<Use
             return;
         }
     }
+
+    int next_id = users.empty() ? 0 : users.back().getId() + 1;
+    User new_user(name, email, next_id);
+    users.push_back(new_user);
     
-    User user(name, email, next_id);
-    users.push_back(user);
     std::cout << GREEN << "[ OK ] Successfully registred! Welcome!\n" << RESET;
+    return next_id;
 }
 // delete user
 void delete_user(std::vector<User>& users, int& current_user_id) {
