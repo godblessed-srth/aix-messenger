@@ -28,4 +28,4 @@ struct Message {
 extern std::vector<Message> g_msgs;
 extern int g_msg_current_id;
 
-int send_msg(int recipient_id, int author_id, const std::string& msg); 
+int send_msg(int recipient_id, int author_id, const std::string& msg_text); 
