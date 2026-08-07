@@ -21,6 +21,7 @@ constexpr string_view HELP_PAGE = R"(
                 reg - registration a new user
                 del - delete a user
                 id - watch a user id
+                send - send a message for any user
 
     =================================================
 )";
@@ -43,9 +44,9 @@ int registration() {
     // name.empty()
     if (name.empty()) { cout << RED << "[ ERR ] Name is empty!\n" << RESET; return -1; }
     // EOF :)
-    if (std::cin.eof()) {
+    if (std::cin.eof() || !std::cin) {
         cout << "\n";
-        return -1;
+        break;
     }
     // email
     cout << "Your email: ";
@@ -72,6 +73,58 @@ void userId() {
     }
     
     cout << RED << "[ ERR ] User not found!\n" << RESET;
+}
+
+int sendMsg() {
+    std::string msg_text, recip_inp;
+    int recip_id;
+    
+     if (std::cin.eof() || !std::cin) {
+        cout << "\n";
+        return -1;
+    }
+    
+    if (g_current_user_id == -1) {
+        cout << RED << "[ ERR ] User not registered!\n" << RESET;
+        return -1;
+    }
+    
+    cout << "Enter recipient ID: ";
+    if (!std::getline(std::cin, recip_inp)) {
+        return -1;
+    }
+    
+    if (recip_inp.empty()) {
+        cout << RED << "[ ERR ] ID is empty!\n" << RESET;
+        return -1;
+    }
+    
+    for (char c : recip_inp) {
+        if (!std::isdigit(c)) {
+            cout << RED << "[ ERR ] ID must be a number!\n" << RESET;
+            return -1;
+        }
+    }
+    
+    recip_id = std::stoi(recip_inp);
+    
+    cout << "Enter message: \n";
+    if (!std::getline(std::cin, msg_text)) {
+        return -1;
+    }
+    
+    if (msg_text.empty()) {
+        cout << RED << "[ ERR ] Cannot send empty message!\n" << RESET;
+        return -1;
+    }
+    
+    int res = send_msg(g_current_user_id, recip_id, msg_text);
+    
+    if (res != -1) {
+        cout << GREEN << "[ OK ] Message sent!\n" << RESET;
+    }
+
+    return res;
 }
 
 int main() {
@@ -104,10 +157,6 @@ int main() {
 
             if (new_id != -1) {
                 g_current_user_id = new_id;
-            }
-            // EOF:-)
-            if (!std::cin) {
-                break;
             }
         } else if (command == "id") {
             userId();
