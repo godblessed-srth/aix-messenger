@@ -37,9 +37,9 @@ int send_msg(int author_id, int recipient_id, const std::string& msg_text) {
     std::cout << RED << "[ ERR ] Cannot send empty message!\n" << RESET;
   }
 
+  int next_id = g_msgs;
   Message new_msg(author_id, recipient_id, msg_text);
   g_msgs.push_back(new_msg);
   
-  
-  return msg_id;
+  return 0;
 }
