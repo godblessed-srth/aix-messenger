@@ -22,3 +22,5 @@ struct Message {
 
 extern std::vector<Message> g_msgs;
 extern int g_msg_current_id = -1;
+
+int send_msg(int 
