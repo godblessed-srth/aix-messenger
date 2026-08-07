@@ -29,7 +29,7 @@ int send_msg(int author_id, int recipient_id, const std::string& msg_text) {
     }
   }
   if (!recipient) {
-    std::cout << RED << "[ ERR ] REcipient " << recipient_id << " not found!\n" << RESET;
+    std::cout << RED << "[ ERR ] Recipient " << recipient_id << " not found!\n" << RESET;
     return -1;
   }
 
