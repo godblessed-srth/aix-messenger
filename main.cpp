@@ -3,6 +3,7 @@
 #include <vector>
 #include <string_view>
 #include "user.hpp"
+#include "message.hpp"
 using std::cout;
 using std::string_view;
 // strings
@@ -115,6 +116,8 @@ int main() {
             if (!std::cin) {
                 break;
             }
+        } elseif (command == "send") {
+            send_msg();
         } else {
             cout << UNKNOWN_COMMAND << "\n";
         }
