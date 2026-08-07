@@ -39,7 +39,7 @@ int send_msg(int author_id, int recipient_id, const std::string& msg_text) {
   }
 
   int next_id = g_msgs.empty() ? 0 : g_msgs.back().msg_id + 1;
-  Message new_msg(author_id, recipient_id, msg_text);
+  Message new_msg(author_id, recipient_id, msg_text, next_id);
   g_msgs.push_back(new_msg);
   
   return next_id;
