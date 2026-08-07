@@ -5,6 +5,10 @@ include <iostream>
 int g_current_msg_id = -1;
 std::vector<Message> g_msgs;
 
-int send_msg(int author_id, int recipient_id, const std::string& msg) {
-  
+int send_msg(int author_id, int recipient_id, const std::string& msg_text) {
+  bool author, recipient;
+
+  for (auto& user : g_users) {
+    
+  }
 }
