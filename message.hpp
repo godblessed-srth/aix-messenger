@@ -11,17 +11,18 @@ struct Message {
   std::string timestamp;
 
   Message() = default;
-  
+    
   Message(int author, int recipient, const std::string& msg) : author_id(author), recipient_id(recipient), msg_text(msg) {
-    auto now = std::time(nullptr);
-    char buff[20];
-    // localtime validate
-    auto time_ptr = std::localtime(&now);
-    if (time_ptr != nullptr) {
-      std::strftime(buff, sizeof(buff), "%Y-%m-%d %H:%M:%S", time_ptr);
-      timestamp = buff;
-    } else {
-      timestamp = "1970-01-01 00:00:00";
+      auto now = std::time(nullptr);
+      char buff[20];
+      // localtime validate
+      auto time_ptr = std::localtime(&now);
+      if (time_ptr != nullptr) {
+        std::strftime(buff, sizeof(buff), "%Y-%m-%d %H:%M:%S", time_ptr);
+        timestamp = buff;
+      } else {
+        timestamp = "1970-01-01 00:00:00";
+    }
   }
 }
 // global
