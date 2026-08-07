@@ -16,5 +16,4 @@ Clone my repository with the command "git clone https://github.com/godblessed-sr
 
 WARNING:
 
-There's a bug in the main.cpp file with a pointer to std::vector<User> users: after registering multiple users, entering the id command may cause the program to produce incomprehensible output or crash.
-The solution is to store the user ID or replace vector with a list.
+The vector bug has been fixed.
