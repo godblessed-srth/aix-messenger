@@ -12,7 +12,7 @@ struct Message {
 
   Message() = default;
     
-  Message(int author, int recipient, const std::string& msg) : author_id(author), recipient_id(recipient), msg_text(msg) {
+  Message(int author, int recipient, int new_id, const std::string& msg) : author_id(author), recipient_id(recipient), msg_text(msg), msg_id(new_id) {
       auto now = std::time(nullptr);
       char buff[20];
       // localtime validate
