@@ -24,7 +24,7 @@ struct Message {
         timestamp = "1970-01-01 00:00:00";
     }
   }
-}
+};
 // global
 extern std::vector<Message> g_msgs;
 extern int g_msg_current_id;
