@@ -24,12 +24,16 @@ int send_msg(int author_id, int recipient_id, const std::string& msg_text) {
   for (const auto& user : g_users) {
     if (user.getId() == recipient_id) {
       recipient = true;
-      recipient_name = user.name;
+      recipient_name = user.getName();
       break;
     }
   }
   if (!recipient) {
     std::cout << RED << "[ ERR ] REcipient " << recipient_id << " not found!\n" << RESET;
     return -1;
+  }
+
+  if (msg_text.empty()) {
+    std::cout << RED << "[ ERR ] Cannot send empty message!\n" << RESET;
   }
 }
