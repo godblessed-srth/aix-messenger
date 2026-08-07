@@ -116,7 +116,7 @@ int main() {
             if (!std::cin) {
                 break;
             }
-        } elseif (command == "send") {
+        } else if (command == "send") {
             send_msg();
         } else {
             cout << UNKNOWN_COMMAND << "\n";
