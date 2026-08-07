@@ -22,7 +22,6 @@ public:
     }
     // getters
     std::string getName() const { return name; }
-    std::string getEmail() const { return email; }
     std::string getHash() const { return hash_em; }
     int getId() const { return id; }
     // setters
