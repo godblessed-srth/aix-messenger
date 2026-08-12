@@ -12,5 +12,8 @@ main.o: main.cpp user.hpp
 user.o: user.cpp user.hpp
 	$(CXX) $(CXXFLAGS) -c user.cpp
 
+message.o: message.cpp message.hpp
+	$(CXX) $(CXXFLAGS) -c message.cpp
+
 clean:
 	rm -f *.o $(TARGET)
