@@ -12,7 +12,7 @@ I'm 15 years old, I'm from Russia, and I'm eager to become a developer (somehow,
 How to install my product on your PC:
 
 My product is designed ONLY for Linux (for Windows, you need to install WSL).
-Clone my repository with the command "git clone https://github.com/godblessed-srth/aix-messanger-new.git", then navigate to the project folder and build it with the command "make".
+Clone my repository with the command "git clone https://github.com/godblessed-srth/aix-messanger-new.git", then navigate to the project folder and build it with the command "make" and run this program "./aix".
 
 # WARNING:
 
