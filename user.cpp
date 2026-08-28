@@ -1,5 +1,7 @@
 #include "user.hpp"
 #include "database.hpp"
+#include <crypt.h>
+#include <stdexcept>
 #include <iostream>
 #include <functional>
 // globals
@@ -8,8 +10,21 @@ std::vector<User> g_users;
 int g_current_user_id = -1;
 // hash email
 std::string hashPassword(const std::string& passw) {
-    std::hash<std::string> hasher;
-    return std::to_string(hasher(passw));
+    char salt[CRYPT_GENSALT_OUTPUT_SIZE];
+
+    crypt_data data;
+
+    if (!crypt_gensalt_rn("$y$", 10, nullptr, 0, salt, sizeof(salt))) {
+        return "";
+    }
+
+    char* hashed = crypt_rn(passw.c_str(), salt, &data, sizeof(data));
+
+    if (!hashed) {
+        return "";
+    }
+
+    return std::string(hashed);
 }
 // validate email
 bool ValidEmail(const std::string& email) {
