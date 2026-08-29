@@ -4,10 +4,6 @@
 #include <stdexcept>
 #include <iostream>
 #include <functional>
-// globals
-extern Database db;
-std::vector<User> g_users;
-int g_current_user_id = -1;
 // hash email
 std::string hashPassword(const std::string& passw) {
     char salt[CRYPT_GENSALT_OUTPUT_SIZE];
@@ -43,7 +39,7 @@ bool ValidEmail(const std::string& email) {
     return true;
 }
 // reg user
-int reg_user(const std::string& name, const std::string& email, const std::string& passw) {
+int reg_user(Database& db, const std::string& name, const std::string& email, const std::string& passw) {
     if (name.empty() || email.empty()) {
         std::cout << RED << "[ ERR ] Name and email cannot be empty!\n" << RESET;
         return -1;
@@ -63,30 +59,20 @@ int reg_user(const std::string& name, const std::string& email, const std::strin
         return -1;
     }
 
-    User new_user(name, email, new_hash, next_id);
-    g_users.push_back(new_user);
-
     std::cout << GREEN << "[ OK ] Successfully registered! Welcome!\n" << RESET;
     return next_id;
 }
 // delete user
-void delete_user() {
-    if (g_current_user_id == -1) {
+void delete_user(Database& db, int& current_user_id) {
+    if (current_user_id == -1) {
         std::cout << RED << "[ ERR ] No user to delete!\n" << RESET;
         return;
     }
 
-    if (db.db_delUser(g_current_user_id)) {
-        std::cout << GREEN << "[ OK ] User deleted: " << g_current_user_id << RESET << "\n";
+    if (db.db_delUser(current_user_id)) {
+        std::cout << GREEN << "[ OK ] User deleted: " << current_user_id << RESET << "\n";
 
-        for (auto it = g_users.begin(); it != g_users.end(); ++it) {
-            if (it->getId() == g_current_user_id) {
-                g_users.erase(it);
-                break;
-            }
-        }
-
-        g_current_user_id = -1;
+        current_user_id = -1;
     } else {
         std::cout << RED << "[ ERR ] User not found!\n" << RESET;
     }

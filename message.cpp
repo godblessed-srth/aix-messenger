@@ -3,12 +3,7 @@
 #include <vector>
 #include "message.hpp"
 #include "user.hpp"
-
-extern Database db;
-int g_current_msg_id = -1;
-std::vector<Message> g_msgs;
-
-int send_msg(int recipient_id, int author_id, const std::string& msg_text) {
+int send_msg(Database& db, int recipient_id, int author_id, const std::string& msg_text) {
   if (msg_text.empty()) {
     std::cout << RED << "[ ERR ] Cannot send empty message!\n" << RESET;
     return -1;

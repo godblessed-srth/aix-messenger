@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <string_view>
+#include "database.hpp"
 // colors
 constexpr std::string_view RESET = "\033[0m";
 constexpr std::string_view RED = "\033[31m";
@@ -29,10 +30,7 @@ public:
     }
     void setId(int new_id) { id = new_id; }
 };
-// global
-extern std::vector<User> g_users;
-extern int g_current_user_id;
 // reg user
-int reg_user(const std::string& name, const std::string& email, const std::string& passw);
+int reg_user(Database& db, const std::string& name, const std::string& email, const std::string& passw);
 // delete user
-void delete_user();
+void delete_user(Database& db, int& current_user_id);

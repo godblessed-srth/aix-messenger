@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17
-LDFLAGS = -lsqlite3
+LDFLAGS = -lsqlite3 -lcrypt
 
 TARGET = aix
 

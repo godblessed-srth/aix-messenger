@@ -7,8 +7,6 @@
 #include "database.hpp"
 using std::cout;
 using std::string_view;
-
-Database db("aix.db");
 // strings
 constexpr string_view STR = "> ";
 constexpr string_view UNKNOWN_COMMAND = "\033[31m[ ERR ] unknown command\033[0m";
@@ -37,7 +35,7 @@ void clear_screen() {
     cout << CLEAR;
 }
 
-int registration() {
+int registration(Database& db) {
     std::string name, email, passw;
     // username
     cout << "Your name: ";
@@ -66,19 +64,10 @@ int registration() {
     // email.empty()
     if (passw.empty()) { cout << RED << "[ ERR ] Password is empty!\n" << RESET; return -1; }
     // reg user
-    return reg_user(name, email, passw);
+    return reg_user(db, name, email, passw);
 }
 
-void userId() {
-    if (g_current_user_id == -1) {
-        cout << RED << "[ ERR ] No user!\n" << RESET;
-        return;
-    }
-    
-    cout << g_current_user_id << "\n";
-}
-
-int sendMsg() {
+int sendMsg(Database& db, int current_user_id) {
     std::string msg_text, recip_inp;
     int recip_id;
     
@@ -87,7 +76,7 @@ int sendMsg() {
         return -1;
     }
     
-    if (g_current_user_id == -1) {
+    if (current_user_id == -1) {
         cout << RED << "[ ERR ] User not registered!\n" << RESET;
         return -1;
     }
@@ -121,7 +110,7 @@ int sendMsg() {
         return -1;
     }
     
-    int res = db.db_sendMsg(recip_id, g_current_user_id, msg_text);
+    int res = db.db_sendMsg(recip_id, current_user_id, msg_text);
     
     if (res != -1) {
         cout << GREEN << "[ OK ] Message sent!\n" << RESET;
@@ -134,10 +123,12 @@ int sendMsg() {
 }
 
 int main() {
+    Database db("aix.db");
     db.initTables();
     cout << CLEAR;
     cout << "Enter 'help' for list of commands\n";
     
+    int current_user_id = -1;
     std::string command;
 
     cout << STR << std::flush;
@@ -160,20 +151,26 @@ int main() {
         } else if (command == "help") {
             help();
         } else if (command == "reg") {
-            int new_id = registration();
+            int new_id = registration(db);
 
             if (new_id != -1) {
-                g_current_user_id = new_id;
+                current_user_id = new_id;
             }
         } else if (command == "id") {
-            userId();
+            if (current_user_id == -1) {
+                cout << RED << "[ ERR ] No user!\n" << RESET;
+                cout << STR << std::flush;
+                continue;
+            }
+
+            cout << current_user_id << "\n";
         } else if (command == "del") {
-            delete_user();
+            delete_user(db, current_user_id);
             if (!std::cin) {
                 break;
             }
         } else if (command == "send") {
-            sendMsg();
+            sendMsg(db, current_user_id);
         } else {
             cout << UNKNOWN_COMMAND << "\n";
         }
