@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include <vector>
 #include <string_view>
 #include "user.hpp"
 #include "message.hpp"
@@ -13,7 +12,7 @@ constexpr string_view UNKNOWN_COMMAND = "\033[31m[ ERR ] unknown command\033[0m"
 constexpr string_view CLEAR = "\033[2J\33[H";
 // help
 constexpr string_view HELP_PAGE = R"(
-    =================================================
+    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
                         COMMANDS:
                 help - output this screen
@@ -23,8 +22,19 @@ constexpr string_view HELP_PAGE = R"(
                 del - delete a user
                 id - watch a user id
                 send - send a message for any user
+                login - log in with your user
 
-    =================================================
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+)";
+
+constexpr string_view START_SCREEN = R"(
+         //$№#\\                            X    /
+      //%$Q%$#Q#%\\             /\      l    X  /
+    //№№$%##%%№Q%$#\\          A  \     |     \X
+    |#QQ№%$%%#Q№Q##%|         /    A    I     /\
+    \\%№№№%%$###Q%$//        /======A   l    /  X
+      \\$Q#%#№№%%//         /        \  |   X    \
+         \\%#№//           /          \
 )";
 
 void help() {
@@ -35,7 +45,7 @@ void clear_screen() {
     cout << CLEAR;
 }
 
-int registration(Database& db) {
+int64_t registration(Database& db) {
     std::string name, email, passw;
     // username
     cout << "Your name: ";
@@ -67,9 +77,9 @@ int registration(Database& db) {
     return reg_user(db, name, email, passw);
 }
 
-int sendMsg(Database& db, int current_user_id) {
+int64_t sendMsg(Database& db, int64_t current_user_id) {
     std::string msg_text, recip_inp;
-    int recip_id;
+    int64_t recip_id;
     
      if (std::cin.eof() || !std::cin) {
         cout << "\n";
@@ -98,7 +108,7 @@ int sendMsg(Database& db, int current_user_id) {
         }
     }
     
-    recip_id = std::stoi(recip_inp);
+    recip_id = std::stoll(recip_inp);
     
     cout << "Enter message: \n";
     if (!std::getline(std::cin, msg_text)) {
@@ -110,7 +120,7 @@ int sendMsg(Database& db, int current_user_id) {
         return -1;
     }
     
-    int res = db.db_sendMsg(recip_id, current_user_id, msg_text);
+    int64_t res = db.db_sendMsg(recip_id, current_user_id, msg_text);
     
     if (res != -1) {
         cout << GREEN << "[ OK ] Message sent!\n" << RESET;
@@ -122,13 +132,50 @@ int sendMsg(Database& db, int current_user_id) {
     return res;
 }
 
+int64_t loginUser(Database& db, int64_t current_user_id) {
+    std::string email, passw;
+
+    if (current_user_id != -1) {
+        cout << RED << "[ ERR ] You already logged in!\n" << RESET;
+        return -1;
+    }
+    // EOF :)
+    if (std::cin.eof() || !std::cin) {
+        cout << "\n";
+        return -1;
+    }
+    // inpit email
+    cout << "Enter email: ";
+    if (!std::getline(std::cin, email)) {
+        return -1;
+    }
+    if (email.empty()) {
+        cout << RED << "[ ERR ] Email is empty!\n" << RESET;
+        return -1;
+    }
+    // input password
+    cout << "Enter password: ";
+    if (!std::getline(std::cin, passw)) {
+        return -1;
+    }
+    if (passw.empty()) {
+        cout << RED << "[ ERR ] Password is empty!\n" << RESET;
+        return -1;
+    }
+
+    return login_user(db, email, passw);
+}
+
 int main() {
     Database db("aix.db");
     db.initTables();
     cout << CLEAR;
+    //bg
+    cout << YELLOW << START_SCREEN << RESET << "\n";
+    // help
     cout << "Enter 'help' for list of commands\n";
     
-    int current_user_id = -1;
+    int64_t current_user_id = -1;
     std::string command;
 
     cout << STR << std::flush;
@@ -151,7 +198,7 @@ int main() {
         } else if (command == "help") {
             help();
         } else if (command == "reg") {
-            int new_id = registration(db);
+            int64_t new_id = registration(db);
 
             if (new_id != -1) {
                 current_user_id = new_id;
@@ -165,12 +212,17 @@ int main() {
 
             cout << current_user_id << "\n";
         } else if (command == "del") {
-            delete_user(db, current_user_id);
-            if (!std::cin) {
-                break;
+            if(delete_user(db, current_user_id)) {
+                current_user_id = -1;
             }
         } else if (command == "send") {
             sendMsg(db, current_user_id);
+        } else if (command == "login") {
+            int64_t logged_in = loginUser(db, current_user_id);
+
+            if (logged_in != -1) {
+                current_user_id = logged_in;
+            }
         } else {
             cout << UNKNOWN_COMMAND << "\n";
         }

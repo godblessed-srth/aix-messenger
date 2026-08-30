@@ -1,5 +1,7 @@
 #include "database.hpp"
 #include <iostream>
+#include <cstdint>
+#include <crypt.h>
 
 Database::Database(const std::string& db_name) {
     if (sqlite3_open(db_name.c_str(), &db) != SQLITE_OK) {
@@ -37,6 +39,8 @@ bool Database::initTables() {
         sqlite3_free(errMsg);
         return false;
     }
+
+    errMsg = nullptr;
     // messages
     if (sqlite3_exec(db, createMsgs, nullptr, nullptr, &errMsg) != SQLITE_OK) {
         sqlite3_free(errMsg);
@@ -46,7 +50,7 @@ bool Database::initTables() {
     return true;
 }
 // registration users
-int Database::db_regUser(const std::string& name, const std::string& email, const std::string& passw) {
+int64_t Database::db_regUser(const std::string& name, const std::string& email, const std::string& passw) {
     const char* sql = "INSERT INTO users (name, email, passw) VALUES (?, ?, ?);";
     sqlite3_stmt* stmt;
 
@@ -62,12 +66,12 @@ int Database::db_regUser(const std::string& name, const std::string& email, cons
     sqlite3_finalize(stmt);
 
     if (rc == SQLITE_DONE) {
-        return static_cast<int>(sqlite3_last_insert_rowid(db));
+        return sqlite3_last_insert_rowid(db);
     }
     return -1;
 }
 
-int Database::db_sendMsg(int recipient_id, int author_id, const std::string& msg_text) {
+int64_t Database::db_sendMsg(int64_t recipient_id, int64_t author_id, const std::string& msg_text) {
     const char* sql = "INSERT INTO messages (recipient_id, author_id, msg_text) VALUES (?, ?, ?);";
     sqlite3_stmt* stmt;
 
@@ -75,21 +79,21 @@ int Database::db_sendMsg(int recipient_id, int author_id, const std::string& msg
         return -1;
     }
 
-    sqlite3_bind_int(stmt, 1, recipient_id);
-    sqlite3_bind_int(stmt, 2, author_id);
+    sqlite3_bind_int64(stmt, 1, recipient_id);
+    sqlite3_bind_int64(stmt, 2, author_id);
     sqlite3_bind_text(stmt, 3, msg_text.c_str(), -1, SQLITE_STATIC);
 
     int rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
 
     if (rc == SQLITE_DONE) {
-        return static_cast<int>(sqlite3_last_insert_rowid(db));
+        return sqlite3_last_insert_rowid(db);
     }
 
     return -1;
 }
 
-bool Database::db_delUser(int id) {
+bool Database::db_delUser(int64_t id) {
     const char* sql = "DELETE FROM users WHERE id = ?;";
     sqlite3_stmt* stmt;
 
@@ -97,7 +101,7 @@ bool Database::db_delUser(int id) {
         return false;
     }
 
-    sqlite3_bind_int(stmt, 1, id);
+    sqlite3_bind_int64(stmt, 1, id);
 
     int rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
@@ -106,4 +110,34 @@ bool Database::db_delUser(int id) {
     }
 
     return false;
+}
+
+int64_t Database::db_loginUser(const std::string& email, const std::string& passw) {
+    const char* sql = "SELECT id, passw FROM users WHERE email = ?;";
+    sqlite3_stmt* stmt;
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        return -1;
+    }
+    // bind email
+    sqlite3_bind_text(stmt, 1, email.c_str(), -1, SQLITE_STATIC);
+
+    int rc = sqlite3_step(stmt);
+
+    if (rc == SQLITE_ROW) {
+        int64_t user_id = sqlite3_column_int64(stmt, 0);
+        const char* db_hash = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+
+        crypt_data data;
+        char* checked_hash = crypt_rn(passw.c_str(), db_hash, &data, sizeof(data));
+
+        if (checked_hash && std::string(checked_hash) == db_hash) {
+            sqlite3_finalize(stmt);
+            return user_id;
+        }
+    }
+
+    sqlite3_finalize(stmt);
+
+    return -1;
 }

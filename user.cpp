@@ -3,7 +3,6 @@
 #include <crypt.h>
 #include <stdexcept>
 #include <iostream>
-#include <functional>
 // hash email
 std::string hashPassword(const std::string& passw) {
     char salt[CRYPT_GENSALT_OUTPUT_SIZE];
@@ -39,7 +38,7 @@ bool ValidEmail(const std::string& email) {
     return true;
 }
 // reg user
-int reg_user(Database& db, const std::string& name, const std::string& email, const std::string& passw) {
+int64_t reg_user(Database& db, const std::string& name, const std::string& email, const std::string& passw) {
     if (name.empty() || email.empty()) {
         std::cout << RED << "[ ERR ] Name and email cannot be empty!\n" << RESET;
         return -1;
@@ -63,17 +62,36 @@ int reg_user(Database& db, const std::string& name, const std::string& email, co
     return next_id;
 }
 // delete user
-void delete_user(Database& db, int& current_user_id) {
+bool delete_user(Database& db, int64_t current_user_id) {
     if (current_user_id == -1) {
         std::cout << RED << "[ ERR ] No user to delete!\n" << RESET;
-        return;
+        return false;
     }
 
     if (db.db_delUser(current_user_id)) {
         std::cout << GREEN << "[ OK ] User deleted: " << current_user_id << RESET << "\n";
 
         current_user_id = -1;
+        return true;
     } else {
         std::cout << RED << "[ ERR ] User not found!\n" << RESET;
+        return false;
     }
+}
+// login
+int64_t login_user(Database& db, const std::string& email, const std::string& passw) {
+    if (email.empty() || passw.empty()) {
+        std::cout << RED << "[ ERR ] Email or password field is EMPTY!\n" << RESET;
+        return -1;
+    }
+
+    int64_t user_id = db.db_loginUser(email, passw);
+
+    if (user_id == -1) {
+        std::cout << RED << "[ ERR ] User not found!\n" << RESET;
+        return -1;
+    }
+
+    std::cout << GREEN << "[ OK ] Successfully logged in! Welcome back!\n" << RESET;
+    return user_id;
 }

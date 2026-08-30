@@ -1,19 +1,19 @@
 #pragma once
 #include <ctime>
 #include <string>
-#include <vector>
+#include <cstdint>
 #include "database.hpp"
 // struct
 struct Message {
-  int recipient_id = -1;
-  int author_id = -1;
+  int64_t recipient_id = -1;
+  int64_t author_id = -1;
   std::string msg_text;
-  int msg_id = -1;
+  int64_t msg_id = -1;
   std::string timestamp;
 
   Message() = default;
     
-  Message(int recipient, int author, const std::string& msg, int new_id) : recipient_id(recipient),author_id(author), msg_text(msg), msg_id(new_id) {
+  Message(int64_t recipient, int64_t author, const std::string& msg, int64_t new_id) : recipient_id(recipient),author_id(author), msg_text(msg), msg_id(new_id) {
       auto now = std::time(nullptr);
       char buff[20];
       // localtime validate
@@ -27,4 +27,4 @@ struct Message {
   }
 };
 
-int send_msg(Database& db, int recipient_id, int author_id, const std::string& msg_text);
+int64_t send_msg(Database& db, int64_t recipient_id, int64_t author_id, const std::string& msg_text);
