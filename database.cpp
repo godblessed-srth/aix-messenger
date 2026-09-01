@@ -31,6 +31,7 @@ bool Database::initTables() {
         "recipient_id INTEGER NOT NULL, "
         "author_id INTEGER NOT NULL, "
         "msg_text TEXT NOT NULL, "
+        "readed INTEGER DEFAULT 0, "
         "FOREIGN KEY(author_id) REFERENCES users(id) ON DELETE CASCADE, "
         "FOREIGN KEY(recipient_id) REFERENCES users(id) ON DELETE CASCADE);";
     // error messahe
@@ -144,9 +145,8 @@ int64_t Database::db_loginUser(const std::string& email, const std::string& pass
 }
 
 std::vector<Message> Database::db_readMsgs(int64_t recipient_id) {
-    const char* sql = "SELECT author_id, msg_text, id FROM messages WHERE recipient_id = ?;";
+    const char* sql = "SELECT author_id, msg_text, id FROM messages WHERE recipient_id = ? AND readed = 0;";
     sqlite3_stmt* stmt;
-
     std::vector<Message> incoming_msgs;
 
     if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
@@ -158,17 +158,29 @@ std::vector<Message> Database::db_readMsgs(int64_t recipient_id) {
 
     while (sqlite3_step(stmt) == SQLITE_ROW) {
         int64_t author = sqlite3_column_int64(stmt, 0);
-
         std::string msg_text = "";
         if (const unsigned char* text_ptr = sqlite3_column_text(stmt, 1)) {
             msg_text = reinterpret_cast<const char*>(text_ptr);
         }
-
-         int64_t msg_id = sqlite3_column_int64(stmt, 2);
-
-         incoming_msgs.emplace_back(recipient_id, author, msg_text, msg_id);
+        int64_t msg_id = sqlite3_column_int64(stmt, 2);
+        incoming_msgs.emplace_back(recipient_id, author, msg_text, msg_id);
     }
 
     sqlite3_finalize(stmt);
+
+    if (!incoming_msgs.empty()) {
+        const char* update_sql = "UPDATE messages SET readed = 1 WHERE recipient_id = ? AND readed = 0;";
+        sqlite3_stmt* update_stmt;
+
+        if (sqlite3_prepare_v2(db, update_sql, -1, &update_stmt, nullptr) != SQLITE_OK) {
+            std::cerr << "[ ERR ] Auto-update readed prepare failed: " << sqlite3_errmsg(db) << std::endl;
+            return incoming_msgs;
+        }
+
+        sqlite3_bind_int64(update_stmt, 1, recipient_id);
+        sqlite3_step(update_stmt);
+        sqlite3_finalize(update_stmt);
+    }
+
     return incoming_msgs;
 }

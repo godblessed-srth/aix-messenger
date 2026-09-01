@@ -12,14 +12,7 @@ I'm 15 years old, I'm from Russia, and I'm eager to become a developer (somehow,
 How to install my product on your PC:
 
 My product is designed ONLY for Linux (for Windows, you need to install WSL).
-Clone my repository with the command "git clone https://github.com/godblessed-srth/aix-messanger-new.git", install make & SDK: 
-  Debian & Ubuntu family: sudo apt install build-essential make sqlite3 libsqlite3-dev
-  Arch family: sudo pacman -S base-devel sqlite3
-  RHEL family: sudo dnf groupinstall "Development Tools" && sudo dnf install sqlite sqlite-devel
-  openSUSE: sudo zypper refresh && sudo zypper install -t pattern devel_basis && sudo zypper install sqlite3 sqlite3-devel
-  Alpine Linux: sudo apk update && sudo apk add build-base sqlite sqlite-dev
-  Void Linux: sudo xbps-install -Syu && sudo xbps-install -S base-devel sqlite-devel
-then navigate to the project folder and build it with the command "make".
+Clone my repository with the command "git clone https://github.com/godblessed-srth/aix-messanger-new.git", then navigate to the project folder and build it with the command "make".
 
 # WARNING:
 
