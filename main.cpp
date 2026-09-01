@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <string_view>
-#include "user.hpp"
 #include "message.hpp"
+#include "user.hpp"
 #include "database.hpp"
 using std::cout;
 using std::string_view;
@@ -12,7 +12,7 @@ constexpr string_view UNKNOWN_COMMAND = "\033[31m[ ERR ] unknown command\033[0m"
 constexpr string_view CLEAR = "\033[2J\33[H";
 // help
 constexpr string_view HELP_PAGE = R"(
-    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
                         COMMANDS:
                 help - output this screen
@@ -23,8 +23,9 @@ constexpr string_view HELP_PAGE = R"(
                 id - watch a user id
                 send - send a message for any user
                 login - log in with your user
+                logout - log out from session
 
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 )";
 
 constexpr string_view START_SCREEN = R"(
@@ -166,6 +167,21 @@ int64_t loginUser(Database& db, int64_t current_user_id) {
     return login_user(db, email, passw);
 }
 
+std::vector<Message> readMsgs(Database& db, int64_t recipient_id) {
+    if (recipient_id == -1) {
+        cout << RED << "[ ERR ] Log in first!\n" << RESET;
+        return std::vector<Message>();
+    }
+
+    auto msgs = read_msgs(db, recipient_id);
+
+    if (msgs.empty()) {
+        cout << YELLOW << "Your inbox is empty\n" << RESET;
+    }
+
+    return msgs;
+}
+
 int main() {
     Database db("aix.db");
     db.initTables();
@@ -222,6 +238,21 @@ int main() {
 
             if (logged_in != -1) {
                 current_user_id = logged_in;
+            }
+        } else if (command == "logout") {
+            if (logout_user(current_user_id)) {
+                current_user_id = -1;
+            }
+        } else if (command == "inbox") {
+            auto msgs = readMsgs(db, current_user_id);
+
+            if (!msgs.empty()) {
+                cout << GREEN << "====================== INBOX ======================" << RESET << "\n";
+                for (const auto& m : msgs) {
+                    cout << "[" << m.timestamp << "] From User ID " << m.author_id
+                    << ": " << m.msg_text << "\n";
+                }
+                cout << GREEN << "===================================================" << RESET << "\n";
             }
         } else {
             cout << UNKNOWN_COMMAND << "\n";

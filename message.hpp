@@ -1,8 +1,10 @@
 #pragma once
 #include <ctime>
 #include <string>
-#include <cstdint>
+#include <vector>
 #include "database.hpp"
+
+class Database;
 // struct
 struct Message {
   int64_t recipient_id = -1;
@@ -26,5 +28,7 @@ struct Message {
     }
   }
 };
-
+// send message
 int64_t send_msg(Database& db, int64_t recipient_id, int64_t author_id, const std::string& msg_text);
+// read messages
+std::vector<Message> read_msgs(Database& db, int64_t recipient_id);

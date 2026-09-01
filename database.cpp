@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstdint>
 #include <crypt.h>
+#include <sqlite3.h>
 
 Database::Database(const std::string& db_name) {
     if (sqlite3_open(db_name.c_str(), &db) != SQLITE_OK) {
@@ -140,4 +141,34 @@ int64_t Database::db_loginUser(const std::string& email, const std::string& pass
     sqlite3_finalize(stmt);
 
     return -1;
+}
+
+std::vector<Message> Database::db_readMsgs(int64_t recipient_id) {
+    const char* sql = "SELECT author_id, msg_text, id FROM messages WHERE recipient_id = ?;";
+    sqlite3_stmt* stmt;
+
+    std::vector<Message> incoming_msgs;
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr) != SQLITE_OK) {
+        std::cerr << "[ ERR ] Prepare failed: " << sqlite3_errmsg(db) << std::endl;
+        return incoming_msgs;
+    }
+
+    sqlite3_bind_int64(stmt, 1, recipient_id);
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        int64_t author = sqlite3_column_int64(stmt, 0);
+
+        std::string msg_text = "";
+        if (const unsigned char* text_ptr = sqlite3_column_text(stmt, 1)) {
+            msg_text = reinterpret_cast<const char*>(text_ptr);
+        }
+
+         int64_t msg_id = sqlite3_column_int64(stmt, 2);
+
+         incoming_msgs.emplace_back(recipient_id, author, msg_text, msg_id);
+    }
+
+    sqlite3_finalize(stmt);
+    return incoming_msgs;
 }

@@ -1,8 +1,12 @@
 #pragma once
 #include <sqlite3.h>
-#include <iostream>
 #include <string>
 #include <cstdint>
+#include <vector>
+#include "message.hpp"
+#include <vector>
+
+struct Message;
 // database
 class Database {
 private:
@@ -17,4 +21,5 @@ public:
     int64_t db_loginUser(const std::string& email, const std::string& passw);
     bool db_delUser(int64_t id);
     int64_t db_sendMsg(int64_t recipient_id, int64_t author_id, const std::string& msg_text);
+    std::vector<Message> db_readMsgs(int64_t recipient_id);
 };

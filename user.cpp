@@ -1,7 +1,6 @@
 #include "user.hpp"
 #include "database.hpp"
 #include <crypt.h>
-#include <stdexcept>
 #include <iostream>
 // hash email
 std::string hashPassword(const std::string& passw) {
@@ -94,4 +93,15 @@ int64_t login_user(Database& db, const std::string& email, const std::string& pa
 
     std::cout << GREEN << "[ OK ] Successfully logged in! Welcome back!\n" << RESET;
     return user_id;
+}
+
+bool logout_user(int64_t current_user_id) {
+    if (current_user_id == -1) {
+        std::cout << RED << "[ ERR ] No user to logout\n" << RESET;
+        return false;
+    }
+
+    std::cout << GREEN << "[ OK ] Successfully logged out!\n" << RESET;
+    current_user_id = -1;
+    return true;
 }

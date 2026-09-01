@@ -1,5 +1,4 @@
 #include <iostream>
-#include <algorithm>
 #include "message.hpp"
 #include "user.hpp"
 int64_t send_msg(Database& db, int64_t recipient_id, int64_t author_id, const std::string& msg_text) {
@@ -16,4 +15,15 @@ int64_t send_msg(Database& db, int64_t recipient_id, int64_t author_id, const st
   }
 
   return next_id;
+}
+
+std::vector<Message> read_msgs(Database& db, int64_t recipient_id) {
+  std::vector<Message> incoming_msgs;
+
+  if (recipient_id == -1) {
+    std::cout << RED << "[ ERR ] Recipient not exists!\n" << RESET;
+    return std::vector<Message>();
+  }
+
+  return db.db_readMsgs(recipient_id);
 }
